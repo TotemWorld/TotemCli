@@ -37,10 +37,10 @@ public partial class Program
         var nameOption = new Option<string>
         (
             aliases: new[] { "--name", "-n" },
-            description: "Provide a name for the fbx asset"
+            description: "Provide a name for the 3d asset"
         );
 
-        var sendPostCommand = new Command("send-fbx", "Send a post request to the Totem api")
+        var sendPostCommand = new Command("send-asset", "Send a post request to the Totem api")
         {
             pathOption,
             nameOption

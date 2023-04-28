@@ -37,14 +37,14 @@ namespace TotemCli.Service
                     break;
             }
 
-            object contentFbx = File.ReadAllBytes(pathFile); 
+            object contentAsset = File.ReadAllBytes(pathFile); 
 
             HttpClient httpClient = new HttpClient();
             Uri uri = new Uri($"{_configuration["API_URL"]}/totem/register-asset");
             AssetModel assetModel = new AssetModel()
             {
                 Name = name,
-                ByteContent = (byte[]) contentFbx
+                ByteContent = (byte[]) contentAsset
             };
 
             var json = JsonConvert.SerializeObject(assetModel);
