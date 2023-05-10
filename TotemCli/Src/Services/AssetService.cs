@@ -3,11 +3,11 @@ using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using Newtonsoft.Json;
-using TotemCli.Src;
+using TotemCli.Models;
 
-namespace TotemCli.Service
+namespace TotemCli.Services
 {
-    internal class AssetService
+    public class AssetService
     {
         private readonly IConfiguration _configuration;
         public AssetService
@@ -19,9 +19,12 @@ namespace TotemCli.Service
         }
 
         enum TypeOfPath { Absolute, Relative }
-        public async Task SendHttpPostRegisterAsset(string path, string name)
+        public async Task SendHttpPostRegisterAsset(string path, string name, string? experience, string longitude, string latitude)
         {
             string absoluteRegexPattern = @"^([a-zA-Z]:)?[\\/].*";
+
+            double longitudeDouble = double.Parse(longitude);
+            double latitudeDouble = double.Parse(latitude);
 
             TypeOfPath typeOfPath = Regex.IsMatch(path, absoluteRegexPattern) ? TypeOfPath.Absolute : TypeOfPath.Relative;
 
@@ -39,15 +42,17 @@ namespace TotemCli.Service
 
             object contentAsset = File.ReadAllBytes(pathFile); 
 
-            HttpClient httpClient = new HttpClient();
-            Uri uri = new Uri($"{_configuration["API_URL"]}/totem/register-asset");
-            AssetModel assetModel = new AssetModel()
+            HttpClient httpClient = new();
+            Uri uri = new($"{_configuration["API_URL"]}/totem/register-asset");
+            Asset Asset = new()
             {
                 Name = name,
-                ByteContent = (byte[]) contentAsset
+                ByteContent = (byte[]) contentAsset,
+                ExperienceId = experience,
+                Point = new Point { Longitude = longitudeDouble, Latitude = latitudeDouble},   
             };
 
-            var json = JsonConvert.SerializeObject(assetModel);
+            var json = JsonConvert.SerializeObject(Asset);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(uri.ToString(), content);
 

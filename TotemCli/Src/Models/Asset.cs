@@ -4,11 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TotemCli.Src
+namespace TotemCli.Models
 {
-    internal class AssetModel
+    internal class Asset
     {
         public string Name { get; set; } = null!;
         public byte[]? ByteContent { get; set; }
+        public string? DestinationId { get; set; }
+        public string? ExperienceId { get; set; }
+        public Point Point { get; set; } = null!;
+
     }
 }

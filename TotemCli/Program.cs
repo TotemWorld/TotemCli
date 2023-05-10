@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using TotemCli.Service;
+using TotemCli.Services;
 using System.Security.Cryptography.X509Certificates;
+using TotemCli.CommandHandlers;
+using TotemCli.Src.Services;
 
 public partial class Program
 {
@@ -18,6 +20,9 @@ public partial class Program
         _serviceProvider = new ServiceCollection()
             .AddSingleton(_configuration)
             .AddSingleton<AssetService>()
+            .AddSingleton<DestinationService>()
+            .AddSingleton<LoadAssetHandler>()
+            .AddSingleton<CreateDestinationHandler>()
             .BuildServiceProvider();
     }
 
@@ -28,31 +33,8 @@ public partial class Program
 
         var rootCommand = new RootCommand();
 
-        var pathOption = new Option<string>
-        (
-            aliases: new[] { "--path", "-t" },
-            description: "Provide the file path. You can include a relative path or an absolute path"
-        );
-
-        var nameOption = new Option<string>
-        (
-            aliases: new[] { "--name", "-n" },
-            description: "Provide a name for the 3d asset"
-        );
-
-        var sendPostCommand = new Command("send-asset", "Send a post request to the Totem api")
-        {
-            pathOption,
-            nameOption
-        };
-
-        rootCommand.AddCommand(sendPostCommand);
-
-        sendPostCommand.SetHandler(async (path, name) =>
-        {
-            await program._serviceProvider.GetRequiredService<AssetService>().SendHttpPostRegisterAsset(path, name);
-
-        }, pathOption, nameOption);
+        program._serviceProvider.GetRequiredService<LoadAssetHandler>().AddCommand(rootCommand);
+        program._serviceProvider.GetRequiredService<CreateDestinationHandler>().AddCommand(rootCommand);
 
         return await rootCommand.InvokeAsync(args);
     }
