@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System.Text;
 using Newtonsoft.Json;
 using TotemCli.Models;
+using System.Security.Cryptography;
 
 namespace TotemCli.Services
 {
@@ -40,29 +41,29 @@ namespace TotemCli.Services
                     break;
             }
 
-            object contentAsset = File.ReadAllBytes(pathFile); 
-
+            byte[] contentAsset = File.ReadAllBytes(pathFile);
             HttpClient httpClient = new();
             Uri uri = new($"{_configuration["API_URL"]}/totem/register-asset");
             Asset Asset = new()
             {
                 Name = name,
-                ByteContent = (byte[]) contentAsset,
+                ByteContent = contentAsset,
                 ExperienceId = experience,
-                Point = new Point { Longitude = longitudeDouble, Latitude = latitudeDouble},   
+                Point = new Point { Longitude = longitudeDouble, Latitude = latitudeDouble },
             };
 
             var json = JsonConvert.SerializeObject(Asset);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(uri.ToString(), content);
 
-            if (response.IsSuccessStatusCode) 
+            if (response.IsSuccessStatusCode)
             {
                 Console.WriteLine("Asset request handle succesfully by the api!");
             }
-            else 
+            else
             {
-                Console.WriteLine($"Error upoading the asset: {response.StatusCode}");
+                Console.WriteLine($"Error uploading the asset: {response.StatusCode}");
+                Console.WriteLine($"Error uploading the asset: {await response.Content.ReadAsStringAsync()}");
             }
 
         }

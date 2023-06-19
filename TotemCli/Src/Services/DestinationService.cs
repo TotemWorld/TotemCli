@@ -58,27 +58,3 @@ namespace TotemCli.Src.Services
         }
     }
 }
-
-
-//HttpClient httpClient = new();
-//Uri uri = new($"{_configuration["API_URL"]}/totem/register-asset");
-//Asset Asset = new()
-//{
-//    Name = name,
-//    ByteContent = (byte[])contentAsset,
-//    ExperienceId = experience,
-//    Point = new Point { Longitude = longitudeDouble, Latitude = latitudeDouble },
-//};
-
-//var json = JsonConvert.SerializeObject(Asset);
-//var content = new StringContent(json, Encoding.UTF8, "application/json");
-//var response = await httpClient.PostAsync(uri.ToString(), content);
-
-//if (response.IsSuccessStatusCode)
-//{
-//    Console.WriteLine("Asset request handle succesfully by the api!");
-//}
-//else
-//{
-//    Console.WriteLine($"Error upoading the asset: {response.StatusCode}");
-//}
