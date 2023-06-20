@@ -54,18 +54,14 @@ namespace TotemCli.Services
 
             var json = JsonConvert.SerializeObject(Asset);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
+            Console.WriteLine("1");
             var response = await httpClient.PostAsync(uri.ToString(), content);
+            Console.WriteLine("2");
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine("Asset request handle succesfully by the api!");
+                throw new Exception($"Error uploading the asset : {response.StatusCode}, {await response.Content.ReadAsStringAsync()}");
             }
-            else
-            {
-                Console.WriteLine($"Error uploading the asset: {response.StatusCode}");
-                Console.WriteLine($"Error uploading the asset: {await response.Content.ReadAsStringAsync()}");
-            }
-
         }
     }
 }

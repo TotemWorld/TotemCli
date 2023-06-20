@@ -45,15 +45,11 @@ namespace TotemCli.Src.Services
 
             var json = JsonConvert.SerializeObject(destination);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(uri, content);
+            var response = await httpClient.PostAsync(uri.ToString(), content);
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine("Request handle succesfully by the api!");
-            }
-            else
-            {
-                Console.WriteLine($"Error upoading the asset: {response.StatusCode}");
+                throw new Exception($"Error creating the destination : {response.StatusCode}, {await response.Content.ReadAsStringAsync()}");
             }
         }
     }

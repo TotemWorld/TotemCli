@@ -15,11 +15,17 @@ namespace TotemCli.CommandHandler
     public class TotemRootCommand : AsyncCommand
     {
         private readonly InteractiveOptionHandler _interactiveOptionHandler;
+        private readonly Prompts _prompts;
 
-        public TotemRootCommand(InteractiveOptionHandler interactiveOptionHandler)
+
+        public TotemRootCommand
+        (
+            InteractiveOptionHandler interactiveOptionHandler, 
+            Prompts prompts
+        )
         {
             _interactiveOptionHandler = interactiveOptionHandler;
-
+            _prompts = prompts;
         }
         public async override Task<int> ExecuteAsync(CommandContext context)
         {
@@ -27,39 +33,16 @@ namespace TotemCli.CommandHandler
                 .LeftJustified()
                 .Color(Color.Green)
             );
+            AnsiConsole.Markup("[green]To go to the Main Menu press [underline]CTRL+M[/][/]");
+            AnsiConsole.WriteLine();
+            AnsiConsole.Markup("[green]To exit the app press [underline green]CTRL+C[/][/]");
+            AnsiConsole.WriteLine();
+            AnsiConsole.WriteLine();
+
 
             //var answerMe = AnsiConsole.Confirm("[gold1]Do you want to enchanced the experience with some music?[/]");
 
-            var selectionPromptStyle = new Style().Foreground(Color.Green);
-
-            var option = AnsiConsole.Prompt<string>
-            (
-                new SelectionPrompt<string>()
-                    .Title("[gold1]Select the[bold] application[/] type:[/]")
-                    .PageSize(10)
-                    .HighlightStyle(selectionPromptStyle)
-                    .MoreChoicesText("Move up and down to reveal more actions")
-                    .AddChoices(
-                        Enum.GetNames(typeof(ProcessType))
-                    )
-            );
-            if(option == "Interactive")
-            {
-                try
-                {
-                    await _interactiveOptionHandler.ShowInterativeOptions();
-                }
-                catch(Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                }
-                
-            }
-
-            if(option == "JsonBatch")
-            {
-                AnsiConsole.Markup("[bold reverse rosybrown]This is not supported yet![/]");
-            }
+            await _prompts.MainMenu();
             return 0;
         }
     }

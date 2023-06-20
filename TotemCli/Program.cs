@@ -27,9 +27,11 @@ public partial class Program
             .AddSingleton(_configuration)
             .AddSingleton<AssetService>()
             .AddSingleton<DestinationService>()
+            .AddSingleton<ExperienceService>()
             .AddSingleton<LoadAssetHandler>()
             .AddSingleton<CreateDestinationHandler>()
-            .AddSingleton<InteractiveOptionHandler>();
+            .AddSingleton<InteractiveOptionHandler>()
+            .AddSingleton<Prompts>();
     }
 
     static public void Main(string[] args)
