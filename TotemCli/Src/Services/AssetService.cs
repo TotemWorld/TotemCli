@@ -42,7 +42,7 @@ namespace TotemCli.Services
             }
 
             byte[] contentAsset = File.ReadAllBytes(pathFile);
-            HttpClient httpClient = new();
+            using HttpClient httpClient = new();
             Uri uri = new($"{_configuration["API_URL"]}/totem/register-asset");
             Asset Asset = new()
             {

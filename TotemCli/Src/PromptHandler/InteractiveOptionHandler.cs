@@ -84,12 +84,10 @@ namespace TotemCli.PromptHandler
             }
             catch(Exception ex) 
             {
-                AnsiConsole.Markup($"[red]{ex.Message}[/]");
+                AnsiConsole.Markup($"[red]{ex.Message.EscapeMarkup()}[/]");
             }
 
             await GoBackOrExit(option, LoadAssetOptionHandler);
-
-            
         }
 
         private async Task CreateDestinationOptionHandler(string option)
@@ -134,7 +132,7 @@ namespace TotemCli.PromptHandler
             }
             catch(Exception ex)
             {
-                AnsiConsole.Markup($"[red]{ex.Message}[/]");
+                AnsiConsole.Markup($"[red]{ex.Message.EscapeMarkup()}[/]");
             }
 
             await GoBackOrExit(option, CreateDestinationOptionHandler);
@@ -149,6 +147,8 @@ namespace TotemCli.PromptHandler
             DateTime endDate;
             string[] inDestinations;
             ExperienceType experienceType;
+            byte[] banner = null!;
+            string bannerPrompt;
 
             experienceName = AnsiConsole.Ask<string>("[gold1]Set the name of the experience:[/]");
             description = AnsiConsole.Ask<string>("[gold1]Set the description:[/]");
@@ -190,6 +190,25 @@ namespace TotemCli.PromptHandler
             );
 
             experienceType = (ExperienceType)Enum.Parse(typeof(ExperienceType), experienceTypeString);
+
+            bannerPrompt = AnsiConsole.Ask<string>("[gold1]Set the path of the banner[mediumpurple2]The ratio should be 9w:5h and the format PNG[/]:[/]");
+
+            try
+            {
+                banner = File.ReadAllBytes(bannerPrompt);
+
+            }
+            catch(Exception ex)
+            {
+                AnsiConsole.Markup($"[red]{ex.Message.EscapeMarkup()}[/]");
+                GoBackOrExit(() =>
+                {
+                    bannerPrompt = AnsiConsole.Ask<string>("[gold1]Set the path of the banner[mediumpurple2]The ratio should be 9w:5h and the format PNG[/]:[/]");
+                });
+            }
+
+
+
             var experience = new Experience
             {
                 ExperienceName = experienceName,
@@ -199,6 +218,7 @@ namespace TotemCli.PromptHandler
                 EndDateTime = endDate,
                 InDestinations = inDestinations,
                 ExperienceType = experienceType,
+                Banner = banner
             };
 
             try
@@ -221,6 +241,16 @@ namespace TotemCli.PromptHandler
            if(goBackOrExit == true)
             {
                 await recurssion.Invoke(option);
+            }
+        }
+
+        private static void GoBackOrExit(Action recurssion)
+        {
+            AnsiConsole.WriteLine();
+            var goBackOrExit = AnsiConsole.Confirm($"[gold1]Do you want to go back?[/]");
+            if (goBackOrExit == true)
+            {
+                recurssion.Invoke();
             }
         }
     }

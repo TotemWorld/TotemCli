@@ -33,7 +33,7 @@ namespace TotemCli.CommandHandler
                 .LeftJustified()
                 .Color(Color.Green)
             );
-            AnsiConsole.Markup("[green]To go to the Main Menu press [underline]CTRL+M[/][/]");
+            //AnsiConsole.Markup("[green]To go to the Main Menu press [underline]CTRL+M[/][/]");
             AnsiConsole.WriteLine();
             AnsiConsole.Markup("[green]To exit the app press [underline green]CTRL+C[/][/]");
             AnsiConsole.WriteLine();

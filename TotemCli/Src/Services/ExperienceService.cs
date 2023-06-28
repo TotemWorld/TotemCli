@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,11 +25,18 @@ namespace TotemCli.Services
 
         public async Task SendHttpPostRegisterAsset(Experience experience)
         {
-            HttpClient httpClient = new();
-            Uri uri = new($"{_configuration["API_URL"]}/totem/create-experience");
-            var json = JsonConvert.SerializeObject(experience);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await httpClient.PostAsync(uri.ToString(), content);
+            using MemoryStream memoryStream = new();
+            memoryStream.Write(experience.Banner, 0, experience.Banner.Length);
+            var fileContent = new StreamContent(memoryStream);
+                var json = JsonConvert.SerializeObject(experience);
+            using MultipartFormDataContent formData = new()
+            {         
+                { fileContent, "Banner" },
+                { new StringContent(json), "Experience" },
+            };
+
+            using HttpClient httpClient = new();
+            var response = await httpClient.PostAsync($"{_configuration["API_URL"]}/totem/create-experience", formData);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"Error creating the experience : {response.StatusCode}, {await response.Content.ReadAsStringAsync()}");

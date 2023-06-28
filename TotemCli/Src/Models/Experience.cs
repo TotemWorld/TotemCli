@@ -20,6 +20,8 @@ namespace TotemCli.Models
         public string[] InDestinations { get; set; } = null!;
         [JsonConverter(typeof(StringEnumConverter))]
         public ExperienceType ExperienceType { get; set; }
+        [JsonIgnore]
+        public byte[] Banner { get; set; } = null!;
     }
 
     public enum ExperienceType

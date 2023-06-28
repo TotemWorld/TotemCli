@@ -34,8 +34,7 @@ namespace TotemCli.Src.Services
             {
                 Console.WriteLine("polygonPoints string can't be parsed into Line<Point>. The format is the following: [{\"Longitude\":1.0,\"Latitude\":2.0},{\"Longitude\":2.0,\"Latitude\":3.0}]");
             }
-
-            HttpClient httpClient = new HttpClient();
+            using HttpClient httpClient = new();
             Uri uri = new($"{_configuration["API_URL"]}/totem/create-destination");
             Destination destination = new()
             {
