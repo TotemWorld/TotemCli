@@ -23,20 +23,18 @@ namespace TotemCli.Services
             _configuration = configuration;
         }
 
-        public async Task SendHttpPostRegisterAsset(Experience experience)
+        public async Task SendHttpPostRegisterAsset(Experience experience, string fileName)
         {
-            using MemoryStream memoryStream = new();
-            memoryStream.Write(experience.Banner, 0, experience.Banner.Length);
-            var fileContent = new StreamContent(memoryStream);
+            var fileContent = new ByteArrayContent(experience.Banner);
                 var json = JsonConvert.SerializeObject(experience);
             using MultipartFormDataContent formData = new()
             {         
-                { fileContent, "Banner" },
+                { fileContent, "Banner", fileName },
                 { new StringContent(json), "Experience" },
             };
 
             using HttpClient httpClient = new();
-            var response = await httpClient.PostAsync($"{_configuration["API_URL"]}/totem/create-experience", formData);
+            var response = await httpClient.PostAsync($"{_configuration["API_URL"]}/totem/experience/create-experience", formData);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"Error creating the experience : {response.StatusCode}, {await response.Content.ReadAsStringAsync()}");

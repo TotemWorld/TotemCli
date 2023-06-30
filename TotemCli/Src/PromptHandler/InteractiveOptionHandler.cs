@@ -71,15 +71,20 @@ namespace TotemCli.PromptHandler
             string path;
             string lat;
             string lon;
+            string pathPicture;
+            string experienceId;
 
             name = AnsiConsole.Ask<string>("[gold1]Set the name of the asset:[/]");
             path = AnsiConsole.Ask<string>("[gold1]Set the path of the asset:[/]");
             lat = AnsiConsole.Ask<string>("[gold1]Set the latitude:[/]");
             lon = AnsiConsole.Ask<string>("[gold1]Set the longitude:[/]");
+            pathPicture = AnsiConsole.Ask<string>("[gold1]Set the path of the picture:[/]");
+            experienceId = AnsiConsole.Ask<string>("[gold1]Choose the experience ID to associate with this asset:[/]");
 
             try
             {
-                await _assetService.SendHttpPostRegisterAsset(name: name, path: path, latitude: lat, longitude: lon, experience: null);
+                await _assetService.SendHttpPostRegisterAsset(name: name, path: path, latitude: lat, longitude: lon, experienceId: experienceId, 
+                    pathPicture: pathPicture);
                 AnsiConsole.Markup("[bold green]Asset registered succesfully!![/]");
             }
             catch(Exception ex) 
@@ -196,6 +201,7 @@ namespace TotemCli.PromptHandler
             try
             {
                 banner = File.ReadAllBytes(bannerPrompt);
+                
 
             }
             catch(Exception ex)
@@ -206,6 +212,8 @@ namespace TotemCli.PromptHandler
                     bannerPrompt = AnsiConsole.Ask<string>("[gold1]Set the path of the banner[mediumpurple2]The ratio should be 9w:5h and the format PNG[/]:[/]");
                 });
             }
+
+            string fileName = Path.GetFileName(bannerPrompt);
 
 
 
@@ -223,7 +231,7 @@ namespace TotemCli.PromptHandler
 
             try
             {
-                await _experienceService.SendHttpPostRegisterAsset(experience);
+                await _experienceService.SendHttpPostRegisterAsset(experience, fileName);
                 AnsiConsole.Markup("[bold green]Experience created succesfully!![/]");
             }
             catch (Exception ex)
